@@ -41,14 +41,19 @@ Vec3 CastRay(
     const Vec3& origin,
     const Vec3& dir,
     const vector<Sphere>& spheres,
-    const vector<Light>& lights) {
+    const vector<Light>& lights,
+    size_t depth = 0) {
   Vec3 hit;
   Vec3 n;
   Material material;
 
-  if (!SceneIntersect(origin, dir, spheres, &hit, &n, &material)) {
+  if (depth > MAX_DEPTH ||
+      !SceneIntersect(origin, dir, spheres, &hit, &n, &material)) {
     return Vec3 {0.2, 0.7, 0.8};  // background color
   }
+
+  auto reflect_dir = Reflect(dir, n).normalize();
+  auto reflect_color = CastRay(hit, reflect_dir, spheres, lights, depth + 1);
 
   auto diffuse_light_intensity = 0.f;
   auto specular_light_intensity = 0.f;
@@ -71,7 +76,8 @@ Vec3 CastRay(
   }
 
   return material.diffuse_color * diffuse_light_intensity * material.albedo[0] +
-         Vec3 {1, 1, 1} * specular_light_intensity * material.albedo[1];
+         Vec3 {1., 1., 1.} * specular_light_intensity * material.albedo[1] +
+         reflect_color * material.albedo[2];
 }
 
 void Render(const vector<Sphere>& spheres, const vector<Light>& lights) {
