@@ -1,6 +1,6 @@
-# cpp_test_env
+# naive-ray-tracer
 
-My simple testing environment for C++ (VS Code).
+A naive ray tracer, written in modern C++.
 
 ## Contributors
 
