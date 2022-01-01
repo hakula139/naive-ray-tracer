@@ -38,7 +38,6 @@ float operator*(const Vector<DIM>& lhs, const Vector<DIM>& rhs) {
 
 template <size_t DIM>
 Vector<DIM> operator+(Vector<DIM> lhs, const Vector<DIM>& rhs) {
-  Vector<DIM> ret;
   for (size_t i = DIM; i--; lhs[i] += rhs[i]) {}
   return lhs;
 }

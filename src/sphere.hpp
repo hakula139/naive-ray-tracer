@@ -2,10 +2,12 @@
 #define SRC_SPHERE_HPP_
 
 #include "base/geometry.hpp"
+#include "material.hpp"
 
 struct Sphere {
   geo::Vec3 center;
   float radius;
+  Material material;
 };
 
 bool RaySphereIntersect(
