@@ -66,7 +66,7 @@ struct Vector<3> {
     return i == 0 ? x : (i == 1 ? y : z);
   }
 
-  float norm() const { return std::sqrt(x * x + y * y + z * z); }
+  float norm() const { return sqrtf(x * x + y * y + z * z); }
 
   Vector<3>& normalize(float l = 1) {
     *this = (*this) * (l / norm());
@@ -81,13 +81,7 @@ struct Vector<3> {
 using Vec3 = Vector<3>;
 using Vec4 = Vector<4>;
 
-Vec3 cross(Vec3 v1, Vec3 v2) {
-  return {
-      v1.y * v2.z - v1.z * v2.y,
-      v1.z * v2.x - v1.x * v2.z,
-      v1.x * v2.y - v1.y * v2.x,
-  };
-}
+Vec3 cross(Vec3 v1, Vec3 v2);
 
 template <size_t DIM>
 std::ostream& operator<<(std::ostream& out, const Vector<DIM>& v) {
