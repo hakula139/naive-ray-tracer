@@ -6,6 +6,7 @@ build/
 output/
 *.log
 
+
 ## Cpp
 
 # Prerequisites
