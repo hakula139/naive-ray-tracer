@@ -18,6 +18,17 @@ using std::vector;
 
 Vec3 Reflect(const Vec3& i, const Vec3& n) { return i - n * 2.f * (i * n); }
 
+// Snell's Law.
+Vec3 Refract(const Vec3& i, const Vec3& n, float eta_t, float eta_i = 1) {
+  auto cos_i = -std::max(-1.f, std::min(1.f, i * n));
+  // Swaps the air and the media if the ray comes from inside.
+  if (cos_i < 0) return Refract(i, -n, eta_i, eta_t);
+
+  float eta = eta_i / eta_t;
+  float k = 1 - eta * eta * (1 - cos_i * cos_i);
+  return k < 0 ? Vec3 {1, 0, 0} : (i * eta + n * (eta * cos_i - sqrtf(k)));
+}
+
 bool SceneIntersect(
     const Vec3& origin,
     const Vec3& dir,
@@ -55,8 +66,13 @@ Vec3 CastRay(
     return Vec3 {0.2, 0.7, 0.8};  // background color
   }
 
+  // Adds reflections.
   auto reflect_dir = Reflect(dir, n).normalize();
   auto reflect_color = CastRay(hit, reflect_dir, spheres, lights, depth + 1);
+
+  // Adds refractions.
+  auto refract_dir = Refract(dir, n, material.refractive_index).normalize();
+  auto refract_color = CastRay(hit, refract_dir, spheres, lights, depth + 1);
 
   auto diffuse_light_intensity = 0.f;
   auto specular_light_intensity = 0.f;
@@ -65,22 +81,26 @@ Vec3 CastRay(
     auto light_dir = (light.position - hit).normalize();
     Vec3 shadow_hit;
 
+    // Adds shadows.
     if (SceneIntersect(hit, light_dir, spheres, &shadow_hit) &&
         (shadow_hit - hit).norm() < (light.position - hit).norm()) {
       continue;
     }
 
+    // Adds diffuse lighting.
     auto diffuse_rate = std::max(0.f, light_dir * n);
     diffuse_light_intensity += light.intensity * diffuse_rate;
 
+    // Adds specular lighting.
     auto specular_rate = powf(
         std::max(0.f, Reflect(light_dir, n) * dir), material.specular_exponent);
     specular_light_intensity += light.intensity * specular_rate;
   }
 
   return material.diffuse_color * diffuse_light_intensity * material.albedo[0] +
-         Vec3 {1., 1., 1.} * specular_light_intensity * material.albedo[1] +
-         reflect_color * material.albedo[2];
+         Vec3 {1, 1, 1} * specular_light_intensity * material.albedo[1] +
+         reflect_color * material.albedo[2] +
+         refract_color * material.albedo[3];
 }
 
 void Render(const vector<Sphere>& spheres, const vector<Light>& lights) {
