@@ -36,6 +36,8 @@ bool SceneIntersect(
     Vec3* p_hit = nullptr,
     Vec3* p_n = nullptr,
     Material* p_material = nullptr) {
+  // Determine the spheres.
+
   auto spheres_dist = std::numeric_limits<float>::max();
   for (const auto& sphere : spheres) {
     auto sphere_dist_i = std::numeric_limits<float>::max();
@@ -48,7 +50,29 @@ bool SceneIntersect(
       if (p_material) *p_material = sphere.material;
     }
   }
-  return spheres_dist < MAX_DIST;
+
+  // Determine the board.
+
+  auto board_dist = std::numeric_limits<float>::max();
+  // Prevents division by 0.
+  if (fabs(dir.y) >= EPS) {
+    // Board equation: y = -4.
+    auto board_dist_tmp = -(origin.y + 4) / dir.y;
+    auto hit = origin + dir * board_dist_tmp;
+    if (board_dist_tmp > EPS && board_dist_tmp < spheres_dist &&
+        fabs(hit.x) < 10 && hit.z > -30 && hit.z < -10) {
+      board_dist = board_dist_tmp;
+      auto board_color = 1 & (static_cast<int>(hit.x / 2. + MAX_DIST) +
+                              static_cast<int>(hit.z / 2.))
+                             ? Vec3 {0.3, 0.3, 0.3}
+                             : Vec3 {0.3, 0.2, 0.1};
+      if (p_hit) *p_hit = hit;
+      if (p_n) *p_n = Vec3 {0, 1, 0};
+      if (p_material) p_material->diffuse_color = board_color;
+    }
+  }
+
+  return std::min(spheres_dist, board_dist) < MAX_DIST;
 }
 
 Vec3 CastRay(
