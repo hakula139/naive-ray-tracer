@@ -12,6 +12,8 @@
 
 using geo::Vec3;
 
+Vec3 Reflect(const Vec3& i, const Vec3& n) { return i - n * 2.f * (i * n); }
+
 bool SceneIntersect(
     const Vec3& origin,
     const Vec3& direction,
@@ -46,12 +48,19 @@ Vec3 CastRay(
     return Vec3{0.2, 0.7, 0.8};  // background color
   }
 
-  float diffuse_light_intensity = 0;
+  auto diffuse_light_intensity = 0.f;
+  auto specular_light_intensity = 0.f;
+
   for (const auto& light : lights) {
     auto light_direction = (light.position - hit).normalize();
-    diffuse_light_intensity += light.intensity *
-                               std::max(0.f, light_direction * n);
+    auto diffuse_rate = std::max(0.f, light_direction * n);
+    diffuse_light_intensity += light.intensity * diffuse_rate;
+    auto specular_rate = powf(
+        std::max(0.f, Reflect(light_direction, n) * direction),
+        material.specular_exponent);
+    specular_light_intensity += light.intensity * specular_rate;
   }
+
   return material.diffuse_color * diffuse_light_intensity;
 }
 
@@ -80,10 +89,10 @@ void Render(
 }
 
 int main() {
-  const Material IVORY{{0.4, 0.4, 0.3}};
-  const Material GLASS{{0.6, 0.7, 0.8}};
-  const Material RED_RUBBER{{0.3, 0.1, 0.1}};
-  const Material MIRROR{{1.0, 1.0, 1.0}};
+  const Material IVORY{1.0, {0.6, 0.3, 0.1, 0.0}, {0.4, 0.4, 0.3}, 50.};
+  const Material GLASS{1.5, {0.0, 0.5, 0.1, 0.8}, {0.6, 0.7, 0.8}, 125.};
+  const Material RED_RUBBER{1.0, {0.9, 0.1, 0.0, 0.0}, {0.3, 0.1, 0.1}, 10.};
+  const Material MIRROR{1.0, {0.0, 10.0, 0.8, 0.0}, {1.0, 1.0, 1.0}, 1425.};
 
   std::vector<Sphere> spheres{
       Sphere{Vec3{-3, 0, -16}, 2, IVORY},
