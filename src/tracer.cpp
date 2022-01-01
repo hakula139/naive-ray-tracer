@@ -56,15 +56,15 @@ bool SceneIntersect(
   auto board_dist = std::numeric_limits<float>::max();
   // Prevents division by 0.
   if (fabs(dir.y) >= EPS) {
-    // Board equation: y = -4.
-    auto board_dist_tmp = -(origin.y + 4) / dir.y;
+    // Board equation: y = -5.
+    auto board_dist_tmp = -(origin.y + 5) / dir.y;
     auto hit = origin + dir * board_dist_tmp;
     if (board_dist_tmp > EPS && board_dist_tmp < spheres_dist &&
-        fabs(hit.x) < 10 && hit.z > -30 && hit.z < -10) {
+        fabs(hit.x) < 20 && hit.z > -40 && hit.z < 0) {
       board_dist = board_dist_tmp;
       auto board_color = 1 & (static_cast<int>(hit.x / 2. + MAX_DIST) +
                               static_cast<int>(hit.z / 2.))
-                             ? Vec3 {0.3, 0.3, 0.3}
+                             ? Vec3 {0.2, 0.1, 0.3}
                              : Vec3 {0.3, 0.2, 0.1};
       if (p_hit) *p_hit = hit;
       if (p_n) *p_n = Vec3 {0, 1, 0};
@@ -87,7 +87,7 @@ Vec3 CastRay(
 
   if (depth > MAX_DEPTH ||
       !SceneIntersect(origin, dir, spheres, &hit, &n, &material)) {
-    return Vec3 {0.2, 0.7, 0.8};  // background color
+    return Vec3 {0.1, 0.1, 0.1};  // background color
   }
 
   // Adds reflections.
