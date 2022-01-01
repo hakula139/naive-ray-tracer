@@ -2,6 +2,7 @@
 
 bin/
 build/
+*.log
 
 
 ## Cpp

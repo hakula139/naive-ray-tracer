@@ -8,14 +8,14 @@
       "name": "(lldb) Launch",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/bin/${fileBasenameNoExtension}",
+      "program": "${workspaceFolder}/bin/tracer",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
       "externalConsole": false,
       "MIMode": "lldb",
-      "preLaunchTask": "C/C++: clang++ build active file"
+      "preLaunchTask": "Make: build project"
     }
   ]
 }

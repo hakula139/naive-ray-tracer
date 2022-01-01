@@ -2,27 +2,13 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "C/C++: clang++ build active file",
-      "type": "cppbuild",
-      "command": "/usr/bin/clang++",
-      "args": [
-        "-g",
-        "-Wall",
-        "-std=c++17",
-        "-fdiagnostics-color=always",
-        "${file}",
-        "-o",
-        "${workspaceFolder}/bin/${fileBasenameNoExtension}"
-      ],
-      "options": {
-        "cwd": "${fileDirname}"
-      },
-      "problemMatcher": ["$gcc"],
+      "label": "Make: build project",
+      "type": "shell",
+      "command": "bash ${workspaceFolder}/scripts/build.sh",
       "group": {
         "kind": "build",
         "isDefault": true
-      },
-      "detail": "compiler: /usr/bin/clang++"
+      }
     }
   ]
 }
