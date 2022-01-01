@@ -3,8 +3,8 @@
 #include <cmath>
 #include <utility>  // std::swap
 
-#include "base/geometry.hpp"
 #include "base/config.hpp"
+#include "base/geometry.hpp"
 
 using geo::Vec3;
 

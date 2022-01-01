@@ -9,3 +9,4 @@ BinPackArguments: false
 BinPackParameters: false
 PenaltyBreakAssignment: 60
 PenaltyBreakBeforeFirstCallParameter: 0
+SpaceBeforeCpp11BracedList: true
