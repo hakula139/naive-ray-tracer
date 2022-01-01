@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "mine.cpplint",
+    "ms-vscode.cpptools-extension-pack",
+    "vadimcn.vscode-lldb"
+  ]
+}
