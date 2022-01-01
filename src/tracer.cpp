@@ -6,6 +6,7 @@
 
 #include "base/config.hpp"
 #include "base/geometry.hpp"
+#include "light.hpp"
 #include "material.hpp"
 #include "sphere.hpp"
 
@@ -35,7 +36,8 @@ bool SceneIntersect(
 Vec3 CastRay(
     const Vec3& origin,
     const Vec3& direction,
-    const std::vector<Sphere>& spheres) {
+    const std::vector<Sphere>& spheres,
+    const std::vector<Light>& lights) {
   Material material;
   Vec3 hit;
   Vec3 n;
@@ -43,10 +45,18 @@ Vec3 CastRay(
   if (!SceneIntersect(origin, direction, spheres, &hit, &n, &material)) {
     return Vec3{0.2, 0.7, 0.8};  // background color
   }
-  return material.diffuse_color;
+
+  float diffuse_light_intensity = 0;
+  for (const auto& light : lights) {
+    auto light_direction = (light.position - hit).normalize();
+    diffuse_light_intensity += light.intensity *
+                               std::max(0.f, light_direction * n);
+  }
+  return material.diffuse_color * diffuse_light_intensity;
 }
 
-void Render(const std::vector<Sphere>& spheres) {
+void Render(
+    const std::vector<Sphere>& spheres, const std::vector<Light>& lights) {
   std::vector<Vec3> frame_buf(WIDTH * HEIGHT);
 
   for (size_t j = 0; j < HEIGHT; ++j) {
@@ -55,7 +65,7 @@ void Render(const std::vector<Sphere>& spheres) {
       auto y = -(2 * (j + 0.5f) / HEIGHT - 1) * tanf(FOV / 2.f);
       auto origin = Vec3{0, 0, 0};
       auto direction = Vec3{x, y, -1}.normalize();
-      frame_buf[i + j * WIDTH] = CastRay(origin, direction, spheres);
+      frame_buf[i + j * WIDTH] = CastRay(origin, direction, spheres, lights);
     }
   }
 
@@ -75,13 +85,19 @@ int main() {
   const Material RED_RUBBER{{0.3, 0.1, 0.1}};
   const Material MIRROR{{1.0, 1.0, 1.0}};
 
-  std::vector<Sphere> spheres = {
+  std::vector<Sphere> spheres{
       Sphere{Vec3{-3, 0, -16}, 2, IVORY},
       Sphere{Vec3{-1.0, -1.5, -12}, 2, GLASS},
       Sphere{Vec3{1.5, -0.5, -18}, 3, RED_RUBBER},
       Sphere{Vec3{7, 5, -18}, 4, MIRROR},
   };
 
-  Render(spheres);
+  std::vector<Light> lights{
+      {{-20, 20, 20}, 1.5},
+      {{30, 50, -25}, 1.8},
+      {{30, 20, 30}, 1.7},
+  };
+
+  Render(spheres, lights);
   return 0;
 }
