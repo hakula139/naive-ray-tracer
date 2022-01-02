@@ -18,7 +18,6 @@
     - [2. 程序原理](#2-程序原理)
   - [贡献者](#贡献者)
   - [许可协议](#许可协议)
-  - [参考文献](#参考文献)
   
 ## 项目报告
 
@@ -65,8 +64,6 @@ mingw32-make
 ## 许可协议
 
 本项目遵循 MIT 许可协议，详情参见 [LICENSE](../LICENSE) 文件。
-
-## 参考文献
 
 [^1]: [Part 1: understandable raytracing · ssloy/tinyraytracer Wiki](https://github.com/ssloy/tinyraytracer/wiki/Part-1:-understandable-raytracing)  
 [^2]: [A Minimal Ray-Tracer: Rendering Simple Shapes (Sphere, Cube, Disk, Plane, etc.) (Ray-Sphere Intersection)](https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection)  
